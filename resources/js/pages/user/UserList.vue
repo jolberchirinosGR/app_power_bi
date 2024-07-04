@@ -1,4 +1,5 @@
 <template>
+  <div v-if="isAdmin || isSuperAdmin">
     <div class="block space-y-4 md:flex md:space-y-0 md:space-x-4 md:rtl:space-x-reverse" style="margin-bottom: 2%;">
         <h1 class="text-gray dark:text-white text-xl font-bold">
             <font-awesome-icon :icon="['fas', 'users']"/>
@@ -39,7 +40,7 @@
           </ul>
         </fwb-dropdown>
 
-        <fwb-dropdown text="Roles">
+        <fwb-dropdown text="Roles" v-if="isSuperAdmin">
           <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200">
             <li  v-for="(role, index) in roles">
               <div class="flex items-center">
@@ -77,6 +78,7 @@
           :user=user
           @open-update-user="updateModalUser"
           @open-delete-user="deleteModalUser"
+          @open-permissions-user="permissionModalUser"
         />
       </fwb-table-body>
     </fwb-table>
@@ -101,6 +103,10 @@
     <user-modals ref="userModals"
         @reload-table="reloadTable"
     />
+    <user-permissions-modals ref="userPermissionsModals"
+        @reload-table="reloadTable"
+    />
+  </div>
 </template>
 
 <script>
@@ -108,7 +114,9 @@ import axios from 'axios';
 import { debounce } from 'lodash';
 import UserListItem from './UserListItem.vue';
 import UserModals from './UserModals.vue';
+import UserPermissionsModals from './UserPermissionsModals.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { useAuthUserStore } from '../../stores/AuthUserStore.js';
 
 //Elementos del flowbite
 import {
@@ -130,6 +138,7 @@ export default {
   components: {
     UserListItem,
     UserModals,
+    UserPermissionsModals,
     FwbA,
     FwbTable,
     FwbTableBody,
@@ -145,6 +154,9 @@ export default {
   },
   data() {
     return {
+      userLogged: useAuthUserStore().user, // Accede al usuario desde el store
+      isSuperAdmin: false, 
+      isAdmin: false, 
       //Objeto para la edicion
       user: {
         id: '',
@@ -174,8 +186,8 @@ export default {
         { value: '50', name: '50'},
         { value: '100', name: '100'},
       ],
-      orderByColumn: '',
-      orderByType: 'none', // none, asc, desc
+      orderByColumn: 'id',
+      orderByType: 'desc', // none, asc, desc
     };
   },
   methods: {
@@ -223,6 +235,11 @@ export default {
       },
 
     // Método para abrir el modal de creación
+      permissionModalUser(data) {
+        this.$refs.userPermissionsModals.openFormModal(data);
+      },
+
+    // Método para abrir el modal de creación
       deleteModalUser(data) {
         this.$refs.userModals.openDeleteModal(data);
       },
@@ -243,6 +260,18 @@ export default {
           this.roles = response.data;
         })
       },
+
+    // Visible solo para ciertos usuarios
+      checkAdmin() {
+        this.isAdmin = (this.userLogged.id_role === 2) ? true : false;
+      },
+
+    // Visible solo para ciertos usuarios
+      checkSuperAdmin() {
+        this.isSuperAdmin = (this.userLogged.id_role === 1) ? true : false;
+      }
+  },
+  computed: {
   },
   watch: {
     inputSearch: debounce(function (newVal) {
@@ -264,6 +293,8 @@ export default {
   created() {
     this.getUsers();
     this.get_roles();
+    this.checkAdmin();
+    this.checkSuperAdmin();
   },
   mounted() {
     initFlowbite();

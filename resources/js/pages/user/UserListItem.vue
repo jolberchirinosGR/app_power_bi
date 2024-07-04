@@ -22,6 +22,11 @@
         <font-awesome-icon :icon="['fas', 'trash']"/>
         Eliminar
       </fwb-button>
+
+      <fwb-button class="mr-2" gradient="green" @click="permissionModalUser(userData)">
+        <font-awesome-icon :icon="['fas', 'hand-paper']"/>
+        Permisos
+      </fwb-button>
     </td>
   </fwb-table-row>
 
@@ -43,7 +48,7 @@ import {
 } from 'flowbite-vue'
 
   export default {
-    emits: ['open-update-user', 'open-delete-user'], //Eventos que se generan en este componente
+    emits: ['open-update-user', 'open-delete-user', 'open-permissions-user'], //Eventos que se generan en este componente
     
     components: {
       FwbA,
@@ -80,6 +85,11 @@ import {
       // Método para abrir el modal de eliminación
         deleteModalUser(user) {
           this.$emit('open-delete-user', user);
+        },
+
+      // Método para abrir el modal de eliminación
+        permissionModalUser(user) {
+          this.$emit('open-permissions-user', user);
         },
       //Obtener fecha en formato carbon
         getDate(date) {

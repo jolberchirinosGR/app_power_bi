@@ -36,7 +36,7 @@
                   </label>
                   <input type="email" name="correo" id="correo"  v-model="user.email" class="input-form-custom" placeholder="Ejemplo@mail.com" autocomplete="off">
               </div>
-              <div class="col-span-1">
+              <div class="col-span-1" v-if="superAdmin">
                   <label for="rol" class="label-form-custom">
                     Rol
                   </label>
@@ -44,7 +44,14 @@
                     <option v-for="rol in rolesAll" :value="rol.id" :key="rol.id">{{ rol.name }}</option>
                   </select>              
               </div>
-                            
+              <div class="col-span-1" v-if="superAdmin">
+                  <label for="rol" class="label-form-custom">
+                    Empresa
+                  </label>
+                  <select v-model="user.company" class="input-form-custom" required>
+                    <option v-for="rol in companiesAll" :value="rol.id" :key="rol.id">{{ rol.razonsocial }}</option>
+                  </select>              
+              </div>                            
           </div>
         </form>
      </template>
@@ -69,11 +76,11 @@
  
  <script>
  import axios from 'axios';
- import { debounce } from 'lodash';
  import UserListItem from './UserListItem.vue';
  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
  import { showSuccessMessage, showErrorMessage, showErrorGroupMessages, useSweetAlert }  from '../../stores/Sweet.js';
- 
+ import { useAuthUserStore } from '../../stores/AuthUserStore.js';
+
  // Elementos del flowbite
  import {
    FwbModal,
@@ -89,6 +96,10 @@
    },
    data() {
      return {
+        userLogged: useAuthUserStore().user, // Accede al usuario desde el store
+        admin: false,
+        superAdmin: false,
+
        // Objeto para la edición
        user: {
          id: '',
@@ -102,6 +113,7 @@
        id: 0,
        errors: null,
        rolesAll: [],
+       companiesAll: [],
        update: false,
        isShowModal: false,
      };
@@ -130,6 +142,7 @@
             this.user.name = user.name ?? null;
             this.user.email = user.email ?? null;
             this.user.id_role = user.id_role ?? null;
+            this.user.id_company = user.id_company ?? null;
           }
           this.isShowModal = true;
         },
@@ -142,10 +155,16 @@
 
       //Obtener todas los Roles
         get_roles(){
-            axios.get('/web/roles')
-            .then((response) => {
-                this.rolesAll = response.data;
-            })
+          axios.get('/web/roles').then((response) => {
+            this.rolesAll = response.data;
+          })
+        },
+
+      //Obtener todas las compañias
+        get_companies(){
+          axios.get('/web/companies').then((response) => {
+            this.companiesAll = response.data;
+          })
         },
 
       //Guardar el usuario
@@ -153,12 +172,17 @@
             if (this.user.password !== this.user.confirm_password) {
                 showErrorMessage('¡La contraseña y su confirmación no coinciden!');
             }else{
+
+                let roleId = (this.admin) ? 3 : this.user.id_role ?? null; //Si el usuario logeado solo puede crear empleados
+                let companyId = (this.admin) ? this.userLogged.id_company : this.user.id_company ?? null; //Si el usuario logeado es admin la empresa tiene que ser la misma del admin
+
                 const data = {
                     id: this.user.id,
                     name: this.user.name,
                     email: this.user.email,
                     password: this.user.password,
-                    id_role: this.user.id_role, // Enviar el ID del rol seleccionado
+                    id_role: roleId, // Enviar el ID del rol seleccionado
+                    id_company: companyId, // Enviar el ID de la compañia seleccionada
                 };
 
                 axios.post('/web/users', data).then(response => {
@@ -177,11 +201,20 @@
             const userId = this.id;
             let passwordConfirm =  true;
 
+            let roleId = (this.admin) 
+                          ? 3 
+                          : this.user.id_role ?? null; //Si el usuario logeado solo puede crear empleados
+
+            let companyId = (this.admin) 
+                          ? this.userLogged.id_company 
+                          : this.user.id_company ?? null; //Si el usuario logeado es admin la empresa tiene que ser la misma del admin
+
             const data = {
                 id: userId,
                 name: this.user.name,
                 email: this.user.email,
-                id_role: this.user.id_role, // Enviar el ID del rol seleccionado
+                id_role: roleId, // Enviar el ID del rol seleccionado
+                id_company: companyId , // Enviar el ID de la compañia seleccionada
             };
 
             if(this.passsword !== '' && this.confirm_password !== ''){
@@ -246,12 +279,22 @@
                 showErrorGroupMessages(errors)
             });
         },
+      //Comprobar los usuarios 
+        isAdmin() {
+          this.admin = this.userLogged.id_role === 2;
+        },
+        isSuperAdmin() {
+          this.superAdmin = this.userLogged.id_role === 1;
+        }
    },
-   watch: {
- 
-   },
+   computed: {
+
+    },
    created() {
     this.get_roles();
+    this.get_companies();
+    this.isAdmin();
+    this.isSuperAdmin();
  
    },
    mounted() {

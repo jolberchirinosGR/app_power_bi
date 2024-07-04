@@ -22,6 +22,7 @@ class User extends Authenticatable
         'password',
         'theme',
         'id_role',
+        'id_company',
     ];
 
     /**
@@ -52,10 +53,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Obtain the tasks that the user has.
+     * Get the role that owns the user.
      */
-    public function tasks() {
-    	return $this->belongsToMany(Task::class);
-
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'id_company');
+    }
+    
+    /**
+     * Get the role that owns the user.
+     */
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class);
     }
 }

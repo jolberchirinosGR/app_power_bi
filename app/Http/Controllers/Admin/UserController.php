@@ -56,7 +56,8 @@ class UserController extends BaseController
      */
     public function profile(Request $request)
     {
-        return $request->user()->only(['name', 'email', 'id_role', 'theme']);
+        $id = $request->user()->id;
+        return User::with('permissions')->find($id);
     }
 
     /**

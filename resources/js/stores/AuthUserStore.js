@@ -7,14 +7,16 @@ export const useAuthUserStore = defineStore('AuthUserStore', () => {
         name: '',
         email: '',
         id_role: '',
+        id_company: '',
         theme: '',
+        permissions: [],
     });
 
     const getAuthUser = async () => {
-        await axios.get('/web/profile')
-            .then((response) => {
-                user.value = response.data;
-            });
+        await axios.get('/web/profile').then((response) => {
+            user.value = response.data;
+            console.log(response.data);
+        });
     };
 
     return { user, getAuthUser };

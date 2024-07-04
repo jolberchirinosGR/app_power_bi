@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
 use App\Models\Role;
-use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -14,43 +14,69 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            CompanySeeder::class,
+        ]);
+        
         // Crear roles
+        $superAdmin = Role::factory()->create([
+            'name' => 'Super Admin',
+        ]);
         $admin = Role::factory()->create([
             'name' => 'Admin',
         ]);
-        $userRole = Role::factory()->create([
-            'name' => 'Usuario',
-        ]);
-
-        // Crear usuarios
-        $adminUser = User::factory()->create([
-            'name' => 'Jolber Chirinos',
-            'email' => 'jrchirinos@gruporuiz.com',
-            'password' => bcrypt(12345678),
-            'id_role' => $admin->id,
-        ]);
-        $operario = User::factory()->create([
-            'name' => 'Operario',
-            'email' => 'test@gruporuiz.com',
-            'password' => bcrypt(12345678),
-            'id_role' => $userRole->id, // Asignar role de usuario
+        $employee = Role::factory()->create([
+            'name' => 'Empleado',
         ]);
 
         // Crear más usuarios
-        $users = User::factory()->count(30)->create();
+        User::factory()->count(30)->create();
 
-        // Crear tareas
-        $tasks = Task::factory()->count(25)->create();
+        // Crear usuarios
+        User::factory()->create([
+            'name' => 'Jolber Chirinos',
+            'email' => 'jrchirinos@gruporuiz.com',
+            'password' => bcrypt(12345678),
+            'id_role' => $superAdmin->id,
+            'id_company' => null,
+        ]);
 
-        // Relacionar usuarios y tareas
-        // Incluye al usuario admin y operario en la colección de usuarios para las relaciones
-        $allUsers = $users->concat([$adminUser, $operario]);
+        User::factory()->create([
+            'name' => 'Alejandro Aceituno',
+            'email' => 'aaceituno@gruporuiz.com',
+            'password' => bcrypt(12345678),
+            'id_role' => $superAdmin->id,
+            'id_company' => null,
+        ]);
 
-        foreach ($tasks as $task) {
-            // Relacionar cada tarea con 1 a 3 usuarios aleatorios
-            $task->users()->attach(
-                $allUsers->random(rand(1, 3))->pluck('id')->toArray()
-            );
-        }
+        User::factory()->create([
+            'name' => 'Admin Ejemplo',
+            'email' => 'admin_test@gruporuiz.com',
+            'password' => bcrypt(12345678),
+            'id_role' => $admin->id, // Asignar role de usuario
+            'id_company' => 21, // Autoperiferia
+        ]);
+
+        User::factory()->create([
+            'name' => 'Empleado',
+            'email' => 'empleado_test@gruporuiz.com',
+            'password' => bcrypt(12345678),
+            'id_role' => $employee->id, // Asignar role de usuario
+            'id_company' => 21, // Autoperiferia
+        ]);
+
+        //Permisos de usuarios
+        Permission::factory()->create([
+            'description' => 'Monetica',
+        ]);
+        Permission::factory()->create([
+            'description' => 'Busme',
+        ]);
+        Permission::factory()->create([
+            'description' => 'Minits',
+        ]);
+        Permission::factory()->create([
+            'description' => 'Autoperiferia',
+        ]);
     }
 }

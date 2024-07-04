@@ -25,6 +25,9 @@ return new class extends Migration
             $table->unsignedBigInteger('id_role')->default(2);
             $table->foreign('id_role')->references('id')->on('roles');
 
+            $table->unsignedBigInteger('id_company')->nullable();
+            $table->foreign('id_company')->references('id')->on('companies');
+
             $table->timestamps();
         });
     }

@@ -59,8 +59,10 @@ class UserRequest extends FormRequest
             'email.unique' => 'Este correo ya está en uso.',
             'password.required' => 'El campo contraseña es obligatorio.',
             'password.min' => 'La contraseña debe tener al menos :min caracteres.',
-            'role_id.required' => 'El campo rol es obligatorio.',
-            'role_id.exists' => 'El rol proporcionado no es válido.',
+            'id_role.required' => 'El campo rol es obligatorio.',
+            'id_role.exists' => 'El rol proporcionado no es válido.',
+            'id_company.required' => 'El campo empresa es obligatorio.',
+            'id_company.exists' => 'La empresa proporcionado no es válida.',
         ];
     }
 }
