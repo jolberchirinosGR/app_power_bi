@@ -17,6 +17,14 @@ export function showSuccessMessage(message) {
     });
 }
 
+export function showInfoMessage(message) {
+  const swal = useSweetAlert();
+  swal.fire({
+    icon: 'info',
+    title: message
+  });
+}
+
 export function showErrorMessage(message) {
     const swal = useSweetAlert();
     swal.fire({

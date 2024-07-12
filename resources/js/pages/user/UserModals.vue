@@ -48,7 +48,7 @@
                   <label for="rol" class="label-form-custom">
                     Empresa
                   </label>
-                  <select v-model="user.company" class="input-form-custom" required>
+                  <select v-model="user.id_company" class="input-form-custom" required>
                     <option v-for="rol in companiesAll" :value="rol.id" :key="rol.id">{{ rol.razonsocial }}</option>
                   </select>              
               </div>                            
@@ -108,6 +108,7 @@
          password: '',
          confirm_password: '',
          id_role: '',
+         id_company: '',
        },
        // Modales y títulos
        id: 0,
@@ -127,6 +128,7 @@
             password: '',
             confirm_password: '',
             id_role: '',
+            id_company: '',
           };
           this.update = false;
         },

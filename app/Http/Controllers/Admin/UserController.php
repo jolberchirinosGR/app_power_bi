@@ -18,6 +18,8 @@ class UserController extends BaseController
         $query = User::query();
         $pagination = 10;
         $sortBy = $request->input('column');
+        $idCompany = auth()->user()->id_company;
+
 
         //Paginacion para la tabla
         if ($request->has('pagination')) {
@@ -39,6 +41,10 @@ class UserController extends BaseController
         if ($request->has('date')) {
             $dateQuery = $request->input('date');
             $query->whereDate('created_at', $dateQuery);
+        }
+
+        if ($idCompany) {
+            $query->where('id_company', $idCompany);
         }
 
         if($sortBy) {
@@ -91,6 +97,7 @@ class UserController extends BaseController
             'email' => $request->input('email'),
             'password' => $request->input('password'),
             'id_role' => $request->input('id_role') ?? 2, //Haciendo referencia a que es empleado
+            'id_company' => $request->input('id_company') ?? null, //Haciendo referencia a que es empleado
         ]);
 
         $user->save();
@@ -115,6 +122,7 @@ class UserController extends BaseController
             $user->password = $request->input('password');
         }
         $user->id_role = $request->input('id_role');
+        $user->id_company = $request->input('id_company') ?? null;
         $user->save();
 
         return $this->sendResponse($user, 'Usuario modificado exitosamente.');
@@ -163,5 +171,39 @@ class UserController extends BaseController
     public function get_roles()
     {
         return Role::orderBy('name', 'asc')->get();
+    }
+
+    /**
+     * Comprobar que no es su primer registro y si es asi tiene que cambiar la contraseña
+     */
+    public function check_first_login(Request $request)
+    {
+        $user =  User::where('email', $request->email)
+                    ->first();
+        
+        if (!$user) {
+            return $this->sendError('Usuario con este campo: '.$request->email.' no encontrado');
+        }else{
+            return $user;
+        }
+    }
+ 
+    /**
+     * Comprobar que no es su primer registro y si es asi tiene que cambiar la contraseña
+     */
+    public function change_password(Request $request)
+    {
+        $user = User::where('email', $request->email)
+                    ->first();
+        
+        $user->password = bcrypt($request->password);
+        $user->email_verified_at = now();
+        $user->save();
+
+        if (!$user) {
+            return $this->sendResponse($user, 'Contraseña actualizada exitosamente...');
+        }else{
+            return $user;
+        }
     }
 }

@@ -8,7 +8,12 @@
 
         <fwb-button class="mr-2" gradient="green" @click="createModalUser()">
           <font-awesome-icon :icon="['fas', 'plus']"/>
-          Nuevo
+          Nuevo usuario
+        </fwb-button>
+
+        <fwb-button class="mr-2" gradient="green" @click="permissionCreatedModalUser()" v-if="isSuperAdmin">
+          <font-awesome-icon :icon="['fas', 'plus']"/>
+          Nuevo permiso
         </fwb-button>
 
         <fwb-dropdown text="Paginación">
@@ -78,7 +83,7 @@
           :user=user
           @open-update-user="updateModalUser"
           @open-delete-user="deleteModalUser"
-          @open-permissions-user="permissionModalUser"
+          @open-permissions-user="permissionUpdatedModalUser"
         />
       </fwb-table-body>
     </fwb-table>
@@ -192,20 +197,20 @@ export default {
   },
   methods: {
     //Obtener todas los Usuarios
-    getUsers(page = 1) {
-        axios.get(`/web/users?page=${page}`, {
-            params: {
-                search: this.inputSearch,
-                role: this.roleSearch,
-                //Generales
-                pagination: this.paginationNumber,
-                order: this.orderByType,
-                column: this.orderByColumn,
-            },
-        }).then((response) => {
-            this.users = response.data;
-        });
-    },
+      getUsers(page = 1) {
+          axios.get(`/web/users?page=${page}`, {
+              params: {
+                  search: this.inputSearch,
+                  role: this.roleSearch,
+                  //Generales
+                  pagination: this.paginationNumber,
+                  order: this.orderByType,
+                  column: this.orderByColumn,
+              },
+          }).then((response) => {
+              this.users = response.data;
+          });
+      },
 
     //Obetener ordenación
       sortBy(column) {
@@ -222,7 +227,7 @@ export default {
             this.orderByColumn = column;
             this.orderByType = 'asc';
         }
-    },
+      },
 
     // Método para abrir el modal de creación
       createModalUser() {
@@ -235,8 +240,13 @@ export default {
       },
 
     // Método para abrir el modal de creación
-      permissionModalUser(data) {
-        this.$refs.userPermissionsModals.openFormModal(data);
+      permissionUpdatedModalUser(data) {
+        this.$refs.userPermissionsModals.openUpdatedFormModal(data);
+      },
+    
+    // Método para abrir el modal de creación
+      permissionCreatedModalUser(data) {
+        this.$refs.userPermissionsModals.openCreatedFormModal(data);
       },
 
     // Método para abrir el modal de creación

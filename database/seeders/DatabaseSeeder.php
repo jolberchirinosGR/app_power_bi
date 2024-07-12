@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             CompanySeeder::class,
         ]);
         
-        // Crear roles
+        //Crear roles
         $superAdmin = Role::factory()->create([
             'name' => 'Super Admin',
         ]);
@@ -29,10 +29,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Empleado',
         ]);
 
-        // Crear más usuarios
-        User::factory()->count(30)->create();
-
-        // Crear usuarios
+        //Crear usuarios
         User::factory()->create([
             'name' => 'Jolber Chirinos',
             'email' => 'jrchirinos@gruporuiz.com',
@@ -42,41 +39,173 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'name' => 'Alejandro Aceituno',
-            'email' => 'aaceituno@gruporuiz.com',
+            'name' => 'Admin Vanwardia',
+            'email' => 'admin_vanwardia@gruporuiz.com',
             'password' => bcrypt(12345678),
-            'id_role' => $superAdmin->id,
-            'id_company' => null,
+            'id_role' => $admin->id, //Asignar role de usuario
+            'id_company' => 26, //Vanwardia
         ]);
 
         User::factory()->create([
-            'name' => 'Admin Ejemplo',
-            'email' => 'admin_test@gruporuiz.com',
+            'name' => 'Empleado Vanwardia',
+            'email' => 'empleado_vanwardia@gruporuiz.com',
             'password' => bcrypt(12345678),
-            'id_role' => $admin->id, // Asignar role de usuario
-            'id_company' => 21, // Autoperiferia
+            'id_role' => $employee->id, //Asignar role de usuario
+            'id_company' => 26, //Vanwardia
         ]);
 
         User::factory()->create([
-            'name' => 'Empleado',
-            'email' => 'empleado_test@gruporuiz.com',
+            'name' => 'Admin Martin',
+            'email' => 'admin_martin@gruporuiz.com',
             'password' => bcrypt(12345678),
-            'id_role' => $employee->id, // Asignar role de usuario
-            'id_company' => 21, // Autoperiferia
+            'id_role' => $admin->id, //Asignar role de usuario
+            'id_company' => 8, //Martin
         ]);
+
+        User::factory()->create([
+            'name' => 'Empleado Martin',
+            'email' => 'empleado_martin@gruporuiz.com',
+            'password' => bcrypt(12345678),
+            'id_role' => $employee->id, //Asignar role de usuario
+            'id_company' => 8, //Martin
+        ]);
+
 
         //Permisos de usuarios
+
+        //AUTOPERIFERIA
         Permission::factory()->create([
-            'description' => 'Monetica',
+            'description' => 'Autoperiferia',
+            'id_company' => 21,
+        ]);
+        Permission::factory()->create([
+            'description' => 'Fichajes',
+            'id_company' => 21, //Autoperiferia
+        ]);
+        Permission::factory()->create([
+            'description' => 'Conducción Eficiente',
+            'id_company' => 21, //Autoperiferia
+        ]);
+        Permission::factory()->create([
+            'description' => 'Operaciones',
+            'id_company' => 21, //Autoperiferia
+        ]);
+
+
+        //BAJAJOZ (UNAUTO)
+        Permission::factory()->create([
+            'description' => 'Badajoz',
+            'id_company' => 10,
+        ]);
+        Permission::factory()->create([
+            'description' => 'Informe de Cámara',
+            'id_company' => 10, //Unauto
+        ]);
+
+
+        //CASCAIS
+        Permission::factory()->create([
+            'description' => 'Cascais',
+            'id_company' => 23,
+        ]);
+        Permission::factory()->create([
+            'description' => 'Informe de Cámara',
+            'id_company' => 23, //Cascais
+        ]);
+
+
+        //MARTIN
+        Permission::factory()->create([
+            'description' => 'Martin',
+            'id_company' => 8,
+        ]);
+        Permission::factory()->create([
+            'description' => 'Fichajes',
+            'id_company' => 8, //Martin
+        ]);
+        Permission::factory()->create([
+            'description' => 'Conducción Eficiente',
+            'id_company' => 8, //Martin
+        ]);
+        Permission::factory()->create([
+            'description' => 'Operaciones',
+            'id_company' => 8, //Martin
+        ]);
+        Permission::factory()->create([
+            'description' => 'Ruade',
+            'id_company' => 8,
+        ]);
+
+
+        //RUIZ
+        Permission::factory()->create([
+            'description' => 'Ruiz',
+            'id_company' => 9,
+        ]);
+        Permission::factory()->create([
+            'description' => 'Fichajes',
+            'id_company' => 9, //Ruiz
+        ]);
+        Permission::factory()->create([
+            'description' => 'Conducción Eficiente',
+            'id_company' => 9, //Ruiz
+        ]);
+        Permission::factory()->create([
+            'description' => 'Operaciones',
+            'id_company' => 9, //Ruiz
+        ]);
+
+
+        //MALLORCA
+        Permission::factory()->create([
+            'description' => 'Mallorca',
+            'id_company' => 22,
+        ]);
+        Permission::factory()->create([
+            'description' => 'Fichajes',
+            'id_company' => 22, //Mallorca
+        ]);
+        Permission::factory()->create([
+            'description' => 'Conducción Eficiente',
+            'id_company' => 22, //Mallorca
+        ]);
+        Permission::factory()->create([
+            'description' => 'Operaciones',
+            'id_company' => 22, //Mallorca
+        ]);
+
+
+        //SALAMANCA
+        Permission::factory()->create([
+            'description' => 'Salamanca',
+            'id_company' => 7,
+        ]);
+        Permission::factory()->create([
+            'description' => 'Fichajes',
+            'id_company' => 7, //Salamanca
+        ]);
+        Permission::factory()->create([
+            'description' => 'Conducción Eficiente',
+            'id_company' => 7, //Salamanca
+        ]);
+        Permission::factory()->create([
+            'description' => 'Operaciones',
+            'id_company' => 7, //Salamanca
+        ]);
+
+
+        //VANWARDIA
+        Permission::factory()->create([
+            'description' => 'Vanwardia',
+            'id_company' => 26,
         ]);
         Permission::factory()->create([
             'description' => 'Busme',
+            'id_company' => 26, //Vanwardia
         ]);
         Permission::factory()->create([
             'description' => 'Minits',
-        ]);
-        Permission::factory()->create([
-            'description' => 'Autoperiferia',
+            'id_company' => 26, //Vanwardia
         ]);
     }
 }

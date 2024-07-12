@@ -11,11 +11,19 @@ class Permission extends Model
 
     protected $fillable = [
         'description',
-        'id_user'
+        'id_company',
     ];
 
     public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * Get the role that owns the user.
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'id_company');
     }
 }

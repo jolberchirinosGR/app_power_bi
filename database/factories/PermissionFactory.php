@@ -19,6 +19,7 @@ class PermissionFactory extends Factory
     {
         return [
             'description' => fake()->name,
+            'id_company' => null,
         ];
     }
 }

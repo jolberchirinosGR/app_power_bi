@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PermissionRequest;
 use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,7 +10,7 @@ use Illuminate\Http\Request;
 class PermissionController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Busqueda de usuario no paginada por 
      */
     public function index_unpaged_id($id)
     {
@@ -26,13 +25,24 @@ class PermissionController extends Controller
      */
     public function index_unpaged()
     {
-        return Permission::orderBy('description', 'asc')->get();
+        $idCompany = auth()->user()->id_company;
+    
+        // Si hay idCompany, obtenemos los permisos con el idCompany y todos los que no tienen id_company
+        if ($idCompany) {
+            return Permission::where(function ($query) use ($idCompany) {
+                $query->where('id_company', $idCompany)
+                      ->orWhereNull('id_company');
+            })->orderBy('description', 'asc')->get();
+        } else {
+            // Si no hay idCompany, simplemente obtenemos todos los permisos
+            return Permission::orderBy('description', 'asc')->get();
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PermissionRequest $request)
+    public function store(Request $request)
     {
         return Permission::create($request->all());
     }
@@ -80,15 +90,5 @@ class PermissionController extends Controller
         }
 
         return $id;
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Permission $permission)
-    {
-        $permission->delete();
-
-        return response()->json(['message' => 'Permission deleted successfully']);
     }
 }

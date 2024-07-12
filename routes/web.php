@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', ApplicationController::class)->where('view', '(.*)')->middleware('auth');
 
+Route::post('/web/check_first_login', [UserController::class, 'check_first_login']);
+Route::post('/web/change_password', [UserController::class, 'change_password']);
+
 Route::middleware('auth:sanctum')->group(function () {
     //Ajsutes basicos de la WebService
     Route::get('/web/users', [UserController::class, 'index']);//Usuarios para el sistema
