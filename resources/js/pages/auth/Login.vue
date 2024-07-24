@@ -127,7 +127,6 @@ export default {
           this.login();
         }
       }).catch((error) => {
-        console.log(error.response);
         this.errorMessage = error.response.data.message;
       }).finally(() => {
         this.loading = false;

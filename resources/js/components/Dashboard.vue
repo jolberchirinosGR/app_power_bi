@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     filteredData() {
-      return this.data.filter(item => this.checkPermission(item.permission));
+      return this.data.filter(item => this.checkPermission(item));
     }
   },
   methods: {
@@ -60,8 +60,15 @@ export default {
     closeFormModal() {
       this.$refs.dataModal.closeFormModal();
     },
-    checkPermission(permission) {
-      return !!this.usserLogged.permissions.find(dataPermission => dataPermission.description === permission);
+    checkPermission(itemData) {
+
+      let hasPermission = false; //Comienza sin permisos 
+
+      itemData.cards.forEach(card => { //Recorre los permisos que necesita el card
+        if (!!this.usserLogged.permissions.find(dataPermission => dataPermission.description === card.permission)) hasPermission = true; //Si el usuario logeado tiene el permiso hasPermission pasa a true
+      });
+
+      return hasPermission; //Devuelve la info si puede acceder al card o no
     }
   },
 };

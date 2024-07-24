@@ -25,13 +25,12 @@ class PermissionController extends Controller
      */
     public function index_unpaged()
     {
-        $idCompany = auth()->user()->id_company;
-    
+        $user = auth()->user();
+
         // Si hay idCompany, obtenemos los permisos con el idCompany y todos los que no tienen id_company
-        if ($idCompany) {
-            return Permission::where(function ($query) use ($idCompany) {
-                $query->where('id_company', $idCompany)
-                      ->orWhereNull('id_company');
+        if ($user->id_role !== 1) {
+            return Permission::whereHas('users', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
             })->orderBy('description', 'asc')->get();
         } else {
             // Si no hay idCompany, simplemente obtenemos todos los permisos

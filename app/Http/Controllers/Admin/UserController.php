@@ -16,44 +16,37 @@ class UserController extends BaseController
     public function index(Request $request)
     {
         $query = User::query();
-        $pagination = 10;
-        $sortBy = $request->input('column');
-        $idCompany = auth()->user()->id_company;
-
-
-        //Paginacion para la tabla
-        if ($request->has('pagination')) {
-            $pagination = $request->input('pagination');
+        $pagination = $request->input('pagination', 10);
+        $sortBy = $request->input('column', 'created_at');
+        $order = $request->input('order', 'desc');
+    
+        $query->with('role');
+        $query->with('company');
+    
+        if ($request->has('role') && $request->input('role') !== 'null') {
+            $query->where('id_role', $request->input('role'));
         }
-
-        // Aplicar la búsqueda si se proporciona un término de búsqueda
+    
+        if ($request->has('date')) {
+            $query->whereDate('created_at', $request->input('date'));
+        }
+    
+        if ($request->has('company') && $request->input('company') !== 'null') {
+            $query->where('id_company', $request->input('company'));
+        }
+    
         if ($request->has('search')) {
             $searchQuery = $request->input('search');
-            $query->where('name', 'like', "%{$searchQuery}%")
-                ->orWhere('email', 'like', "%{$searchQuery}%");
+            $query->where(function ($q) use ($searchQuery) {
+                $q->where('name', 'like', "%{$searchQuery}%")
+                  ->orWhere('email', 'like', "%{$searchQuery}%");
+            });
         }
-
-        if ($request->has('role')) {
-            $roleQuery = $request->input('role');
-            $roleQuery == 'null' ? null : $query->where('id_role',  $roleQuery);
-        }
-
-        if ($request->has('date')) {
-            $dateQuery = $request->input('date');
-            $query->whereDate('created_at', $dateQuery);
-        }
-
-        if ($idCompany) {
-            $query->where('id_company', $idCompany);
-        }
-
-        if($sortBy) {
-            $query->orderBy($sortBy, $request->input('order'));
-        }
-
-        // Obtener los resultados paginados
-        $users = $query->latest()->paginate($pagination);
-
+    
+        $query->orderBy($sortBy, $order);
+    
+        $users = $query->paginate($pagination);
+    
         return $users;
     }
 

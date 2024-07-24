@@ -64,6 +64,25 @@
           </ul>
         </fwb-dropdown>
 
+        <fwb-dropdown text="Sedes">
+          <ul class="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200">
+            <li  v-for="(sede, index) in companies">
+              <div class="flex items-center">
+                  <input type="radio" v-model="companySearch" :value="sede.id">
+                  <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ sede.empresa }}</label>
+              </div>
+            </li>
+            <li>
+              <div class="flex items-center">
+                  <input type="radio" v-model="companySearch" value=null>
+                  <label class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                    Sin filtrar
+                  </label>
+              </div>
+            </li>
+          </ul>
+        </fwb-dropdown>
+
         <fwb-input #prefix v-model="inputSearch" placeholder="Buscador nombre o correo">
           <font-awesome-icon :icon="['fas', 'search']"/>
         </fwb-input>
@@ -73,6 +92,8 @@
       <fwb-table-head>
         <fwb-table-head-cell>Nombre</fwb-table-head-cell>
         <fwb-table-head-cell>Correo</fwb-table-head-cell>
+        <fwb-table-head-cell>Sede</fwb-table-head-cell>
+        <fwb-table-head-cell>Rol</fwb-table-head-cell>
         <fwb-table-head-cell>Creado</fwb-table-head-cell>
         <fwb-table-head-cell>Acciones</fwb-table-head-cell>
       </fwb-table-head>
@@ -178,11 +199,13 @@ export default {
       update: false,
       //Variables para comprobar los resultados y el total de los datos
       roles: [],
+      companies: [],
       users: [],
       //Filtros para el listado
       inputSearch: null,
       roleSearch: null,
       dateSearch: null,
+      companySearch: null,
       //Generales
       paginationNumber: 10,
       paginationSelect: [
@@ -202,6 +225,7 @@ export default {
               params: {
                   search: this.inputSearch,
                   role: this.roleSearch,
+                  company: this.companySearch,
                   //Generales
                   pagination: this.paginationNumber,
                   order: this.orderByType,
@@ -265,7 +289,7 @@ export default {
       },
 
     //Obtener todas los Roles
-      get_roles(){
+      getRoles(){
         axios.get('/web/roles').then((response) => {
           this.roles = response.data;
         })
@@ -279,7 +303,14 @@ export default {
     // Visible solo para ciertos usuarios
       checkSuperAdmin() {
         this.isSuperAdmin = (this.userLogged.id_role === 1) ? true : false;
-      }
+      },      
+
+    //Obtener todas las compañias
+      getCompanies(){
+        axios.get('/web/companies').then((response) => {
+          this.companies = response.data;
+        })
+      },
   },
   computed: {
   },
@@ -296,15 +327,19 @@ export default {
     roleSearch: debounce(function () {
       this.getUsers();
     }, 300),
+    companySearch: debounce(function () {
+      this.getUsers();
+    }, 300),
     orderByType: debounce(function () {
       this.getUsers();
     }, 300),
   },
   created() {
     this.getUsers();
-    this.get_roles();
+    this.getRoles();
     this.checkAdmin();
     this.checkSuperAdmin();
+    this.getCompanies();
   },
   mounted() {
     initFlowbite();

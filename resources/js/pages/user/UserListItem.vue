@@ -1,4 +1,5 @@
 <template>
+  {{ console.log() }}
   <fwb-table-row>
     <fwb-table-cell>
       {{ userData.name }}
@@ -6,6 +7,14 @@
 
     <fwb-table-cell>
       {{ userData.email }}
+    </fwb-table-cell>
+
+    <fwb-table-cell>
+      {{ userData.company?.empresa ?? 'GRUPO'}}
+    </fwb-table-cell>
+
+    <fwb-table-cell>
+      {{ userData.role.name }}
     </fwb-table-cell>
 
     <fwb-table-cell>
@@ -23,7 +32,8 @@
         Eliminar
       </fwb-button>
 
-      <fwb-button class="mr-2" gradient="green" @click="permissionModalUser(userData)">
+      <!-- No puedes editar tus propios permisos -->
+      <fwb-button class="mr-2" gradient="green" @click="permissionModalUser(userData)"> 
         <font-awesome-icon :icon="['fas', 'hand-paper']"/>
         Permisos
       </fwb-button>
@@ -34,6 +44,7 @@
   
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { useAuthUserStore } from '../../stores/AuthUserStore.js';
 
 //Elementos del flowbite
 import {
@@ -66,6 +77,7 @@ import {
     data() {
       return {
         userData: this.user,
+        userLogged: useAuthUserStore().user, // Accede al usuario desde el store
         rolesAll: [],
       };
     },

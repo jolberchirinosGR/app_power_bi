@@ -11,11 +11,13 @@
     <template #body>
       <div class="space-y-2">
         <!-- Cards -->
-        <fwb-card v-for="(card, cardIndex) in filteredCards" :key="cardIndex" class="mb-2" @click="openIframe({ src: card.iframe, title: card.description })">
+        <fwb-card v-for="(card, cardIndex) in filteredCards" :key="cardIndex" @click="openIframe({ src: card.iframe, title: card.description })">
           <div class="p-3">
-            <p class="font-normal text-gray-700 dark:text-gray-400">
-              {{ card.title }}
-              <font-awesome-icon :icon="['fas', card.icon ]" />
+            <p class="text-2xl text-gray-700 dark:text-gray-400">
+              <!-- <font-awesome-icon :icon="['fas', card.icon ]"/> -->
+              <strong class="ml-2">
+                {{ card.title }}
+              </strong>
             </p>
           </div>
         </fwb-card>
@@ -23,7 +25,7 @@
         <fwb-card v-for="(subitem, subIndex) in filteredCardWithSubItem" :key="subIndex" class="mb-2">
           <div class="p-3">
             <!-- Title dropmenu -->
-            <p class="font-normal text-gray-700 dark:text-gray-400 cursor-pointer" @click="toggleDropdown(subIndex)">
+            <p class="text-2xl text-gray-700 dark:text-gray-400 cursor-pointer" @click="toggleDropdown(subIndex)">
               {{ subitem.title }}
               <font-awesome-icon :icon="['fas', subitem.dropdownOpen ? 'chevron-up' : 'chevron-down']" />
             </p>

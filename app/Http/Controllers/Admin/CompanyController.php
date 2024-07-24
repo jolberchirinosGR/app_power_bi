@@ -10,6 +10,6 @@ class CompanyController extends BaseController
 {
     public function index(Request $request)
     {
-        return Company::orderBy('razonsocial', 'asc')->get();
+        return Company::orderBy('empresa', 'asc')->get();
     }
 }
